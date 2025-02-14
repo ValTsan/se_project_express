@@ -1,3 +1,6 @@
+console.log("This won't trigger ESLint warnings");
+console.error("Neither will this");
+
 module.exports = {
   env: {
     es2021: true,
@@ -19,5 +22,8 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  rules: { "no-underscore-dangle": ["error", { allow: ["_id"] }] },
+  rules: {
+    "no-underscore-dangle": ["error", { allow: ["_id"] }],
+    "no-console": ["warn", { allow: ["error"] }],
+  },
 };

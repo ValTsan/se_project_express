@@ -6,19 +6,20 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint ."
   },
   "author": "Valerie Tsan",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "mongoose": "^8.10.0"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-import": "^2.31.0",
+    "nodemon": "^3.1.9",
     "prettier": "^2.8.8"
   }
 }
