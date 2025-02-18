@@ -1,5 +1,5 @@
-const User = require("../models/user");
 const { StatusCodes } = require("http-status-codes");
+const User = require("../models/user");
 
 //GET /users
 const getUsers = (req, res) => {
@@ -9,7 +9,7 @@ const getUsers = (req, res) => {
       console.error(err);
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ message: err.message });
+        .json({ message: "Internal Server Error" });
     });
 };
 
@@ -21,31 +21,26 @@ const createUser = (req, res) => {
     .then((user) => res.status(StatusCodes.CREATED).json(user))
     .catch((err) => {
       console.error(err);
-      return res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Bad Request" });
     });
 };
 
 //GET /:userId
 const getUser = (req, res) => {
   const { userId } = req.params;
-
   User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        return res
-          .status(StatusCodes.NOT_FOUND)
-          .json({ message: "User not found" });
-      }
-      res.status(StatusCodes.OK).json(user);
-    })
-
+    .orFail()
+    .then((user) => res.status(StatusCodes.OK).json(user))
     .catch((err) => {
-      console.error("Database error:", err);
-      if (err.name === "CastError") {
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .json({ message: "Invalid user ID format" });
-      }
+      console.error(err);
+      console.log(err.name);
+      // if (err.name === "") {
+      //   return res
+      //     .status(StatusCodes.BAD_REQUEST)
+      //     .json({ message: "Invalid user ID format" });
+      // }
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ message: "Server error" });
