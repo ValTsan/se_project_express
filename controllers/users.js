@@ -26,32 +26,6 @@ const createUser = (req, res) => {
         .json({ message: "Bad Request" });
     });
 };
-// //GET /:userId
-// const getUser = (req, res) => {
-//   const { userId } = req.params;
-
-//   if (!/^[a-fA-F0-9]{24}$/.test(userId)) {
-//     return res
-//       .status(StatusCodes.BAD_REQUEST)
-//       .json({ message: "Invalid user ID format" });
-//   }
-
-//   User.findById(userId)
-//     .then((user) => {
-//       if (!user) {
-//         return res
-//           .status(StatusCodes.NOT_FOUND)
-//           .json({ message: "User not found" });
-//       }
-//       res.status(StatusCodes.OK).json(user);
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//       res
-//         .status(StatusCodes.INTERNAL_SERVER_ERROR)
-//         .json({ message: "Server error" });
-//     });
-// };
 
 //GET /:userId
 const getUser = (req, res) => {
@@ -61,12 +35,16 @@ const getUser = (req, res) => {
     .then((user) => res.status(StatusCodes.OK).json(user))
     .catch((err) => {
       console.error(err);
-      if (err.name === "CastError") {
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(StatusCodes.NOT_FOUND).json({ message: "Not Found" });
+      } else if (err.name === "CastError") {
         return res
           .status(StatusCodes.BAD_REQUEST)
           .json({ message: "Invalid user ID format" });
       }
-      return res.status(StatusCodes.NOT_FOUND).json({ message: "Not Found" });
+      return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Internal Server Error" });
     });
 };
 
