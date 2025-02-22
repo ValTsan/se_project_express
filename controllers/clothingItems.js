@@ -15,9 +15,11 @@ const createItem = (req, res) => {
     })
     .catch((error) => {
       console.error(error.name);
+
       if (error.name === "ValidationError") {
         return res.status(BAD_REQUEST).json({ message: "Validation error" });
       }
+      return res.status(DEFAULT).json({ message: "Internal server error" });
     });
 };
 
@@ -45,16 +47,13 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findById(itemId)
     .orFail()
-    .then((items) => res.status(200).send({ items }))
     .then((item) => {
-      if (!item) {
-        return res.status(NOT_FOUND).json({ message: "Item not found" });
-      }
-      return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) => {
-        res
-          .status(200)
-          .json({ message: "Item deleted successfully", deletedItem });
-      });
+      return ClothingItem.findByIdAndDelete(itemId);
+    })
+    .then((deletedItem) => {
+      res
+        .status(200)
+        .json({ message: "Item deleted successfully", deletedItem });
     })
     .catch((err) => {
       console.error(err);
@@ -65,6 +64,7 @@ const deleteItem = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).json({ message: "Validation error" });
       }
+      return res.status(DEFAULT).json({ message: "Internal Server Error" });
     });
 };
 
@@ -85,6 +85,7 @@ const likeItem = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).json({ message: "Validation error" });
       }
+      return res.status(DEFAULT).json({ message: "Internal Server Error" });
     });
 };
 
@@ -104,6 +105,7 @@ const deleteLike = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).json({ message: "Validation error" });
       }
+      return res.status(DEFAULT).json({ message: "Internal Server Error" });
     });
 };
 
