@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 //ClothingItem Schema
 const clothingItemSchema = new mongoose.Schema({
@@ -16,6 +17,10 @@ const clothingItemSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
     required: true,
+    validate: {
+      validator: (v) => validator.isURL(v),
+      message: "Link is not Valid",
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
