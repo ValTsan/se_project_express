@@ -32,7 +32,7 @@ const getItems = (req, res) => {
       console.error(err);
       console.log(err.name);
       if (err.name === "DocumentNotFoundError") {
-        return next(new NOT_FOUND("Item not found"));
+        return res.status(NOT_FOUND).json({ message: "Item not found" });
       }
       return res.status(DEFAULT).json({ message: "Internal Server Error" });
     });
@@ -85,7 +85,7 @@ const likeItem = (req, res) => {
 };
 
 // UNLIKE/DELETE Like
-const deleteLike = (req, res, next) => {
+const deleteLike = (req, res) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
