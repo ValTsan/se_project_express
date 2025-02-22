@@ -1,10 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
-const {
-  DEFAULT,
-  BAD_REQUEST,
-  NOT_FOUND,
-  FORBIDDEN_ERROR,
-} = require("../utils/errors");
+const { DEFAULT, BAD_REQUEST, NOT_FOUND } = require("../utils/errors");
 
 // POST /items
 const createItem = (req, res) => {
