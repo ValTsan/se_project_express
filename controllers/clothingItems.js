@@ -1,4 +1,4 @@
-const ClothingItem = require("../models/clothingItem");
+const ClothingItem = require("../models/clothingItems");
 const { DEFAULT, BAD_REQUEST, NOT_FOUND } = require("../utils/errors");
 
 // POST /items
