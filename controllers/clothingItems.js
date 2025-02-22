@@ -45,13 +45,17 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findById(itemId)
     .orFail()
+    .then((items) => res.status(200).send({ items }))
     .then((item) => {
       if (!item) {
-        return res.status(404).json({ message: "Item not found" });
+        return res.status(NOT_FOUND).json({ message: "Item not found" });
       }
-      return ClothingItem.findByIdAndDelete(itemId);
+      return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) => {
+        res
+          .status(200)
+          .json({ message: "Item deleted successfully", deletedItem });
+      });
     })
-    .then((items) => res.status(200).send({ items }))
     .catch((err) => {
       console.error(err);
 
