@@ -1,11 +1,13 @@
 const ClothingItem = require("../models/clothingItem");
-
-const BadRequestError = require("../errors/BadRequestError");
-const NotFoundError = require("../errors/NotFoundError");
-const ForbiddenError = require("../errors/ForbiddenError");
+const {
+  DEFAULT,
+  BAD_REQUEST,
+  NOT_FOUND,
+  FORBIDDEN_ERROR,
+} = require("../utils/errors");
 
 // POST /items
-const createItem = (req, res, next, err) => {
+const createItem = (req, res) => {
   console.log("Received user ID:", req.user._id);
 
   const { name, weather, imageUrl } = req.body;
@@ -17,16 +19,15 @@ const createItem = (req, res, next, err) => {
       res.status(200).json(item);
     })
     .catch((error) => {
-      console.error(err);
+      console.error(error.name);
       if (error.name === "ValidationError") {
-        return next(new BadRequestError("Validation error"));
+        return res.status(BAD_REQUEST).json({ message: "Validation error" });
       }
-      return next(err);
     });
 };
 
 // GET /items
-const getItems = (req, res, next) => {
+const getItems = (req, res) => {
   const { itemId } = req.params;
   console.log(itemId);
 
@@ -36,24 +37,22 @@ const getItems = (req, res, next) => {
       console.error(err);
       console.log(err.name);
       if (err.name === "DocumentNotFoundError") {
-        return next(new NotFoundError("Item not found"));
+        return next(new NOT_FOUND("Item not found"));
       }
-      return next(err);
+      return res.status(DEFAULT).json({ message: "Internal Server Error" });
     });
 };
 
 // DELETE /items/:itemId
-const deleteItem = (req, res, next) => {
+const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  console.log(itemId);
+  console.log("Deleting item:", itemId);
 
   ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
-      if (req.user._id !== item.owner.toString()) {
-        const error = new Error();
-        error.name = "ForbiddenError";
-        throw error;
+      if (!item) {
+        return res.status(404).json({ message: "Item not found" });
       }
       return ClothingItem.findByIdAndDelete(itemId);
     })
@@ -62,21 +61,16 @@ const deleteItem = (req, res, next) => {
       console.error(err);
 
       if (err.name === "DocumentNotFoundError") {
-        return next(new NotFoundError("Item not found"));
+        return res.status(NOT_FOUND).json({ message: "Item not found" });
       }
       if (err.name === "CastError") {
-        return next(new BadRequestError("Validation error"));
+        return res.status(BAD_REQUEST).json({ message: "Validation error" });
       }
-
-      if (err.name === "ForbiddenError") {
-        return next(new ForbiddenError("Forbidden action"));
-      }
-      return next(err);
     });
 };
 
 // LIKE Item
-const likeItem = (req, res, next) => {
+const likeItem = (req, res) => {
   // http://localhost:3001/items/12d124d121212/likes
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
@@ -87,12 +81,11 @@ const likeItem = (req, res, next) => {
     .then((items) => res.status(200).send(items))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return next(new NotFoundError("item not found"));
+        return res.status(NOT_FOUND).json({ message: "Item not found" });
       }
       if (err.name === "CastError") {
-        return next(new BadRequestError("Validation error"));
+        return res.status(BAD_REQUEST).json({ message: "Validation error" });
       }
-      return next(err);
     });
 };
 
@@ -104,15 +97,14 @@ const deleteLike = (req, res, next) => {
     { new: true }
   )
     .orFail()
-    .then((items) => res.status(200).send(items))
+    .then((items) => res.status(200).json(items))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return next(new NotFoundError("item not found"));
+        return res.status(NOT_FOUND).json({ message: "item not found" });
       }
       if (err.name === "CastError") {
-        return next(new BadRequestError("Validation error"));
+        return res.status(BAD_REQUEST).json({ message: "Validation error" });
       }
-      return next(err);
     });
 };
 

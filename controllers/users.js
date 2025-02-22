@@ -28,10 +28,10 @@ const createUser = (req, res) => {
 
 // GET /:userId
 const getUser = (req, res) => {
-  const { userId } = req.params;
-  console.log("Received userId:", userId);
+  const { userid } = req.params;
+  console.log("Received userId:", userid);
 
-  User.findById(userId)
+  User.findById(userid)
     .orFail()
     .then((user) => res.status(200).json(user))
     .catch((err) => {
