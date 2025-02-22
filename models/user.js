@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-//USER Schema
+// USER Schema
 const userSchema = new mongoose.Schema({
   name: {
     type: String,

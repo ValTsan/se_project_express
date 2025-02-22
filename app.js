@@ -6,7 +6,7 @@ const errorHandler = require("./middlewares/error-handler");
 const app = express();
 const { PORT = 3001 } = process.env;
 
-//Middleware hardcoded user object
+// Middleware hardcoded user object
 app.use((req, res, next) => {
   req.user = {
     _id: "67b967d41a9c58677cf18699",
@@ -29,7 +29,7 @@ mongoose
   })
   .catch(console.error);
 
-//Port Connection
+// Port Connection
 app.listen(PORT, () => {
   console.log(`App is running on port ${PORT}`);
 });

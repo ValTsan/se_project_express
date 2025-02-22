@@ -1,8 +1,7 @@
 const User = require("../models/user");
-const validator = require("validator");
 const { DEFAULT, BAD_REQUEST, NOT_FOUND } = require("../utils/errors");
 
-//GET /users
+// GET /users
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).json(users))
@@ -12,7 +11,7 @@ const getUsers = (req, res) => {
     });
 };
 
-//POST /users
+// POST /users
 const createUser = (req, res) => {
   console.log(req);
   console.log(req.body);
@@ -27,7 +26,7 @@ const createUser = (req, res) => {
     });
 };
 
-//GET /:userId
+// GET /:userId
 const getUser = (req, res) => {
   const { userId } = req.params;
   console.log("Received userId:", userId);
@@ -39,7 +38,8 @@ const getUser = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).json({ message: "Not Found" });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(BAD_REQUEST).json({ message: "Bad Request" });
       }
       return res.status(DEFAULT).json({ message: "Internal Server Error" });

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-//ClothingItem Schema
+// ClothingItem Schema
 const clothingItemSchema = new mongoose.Schema({
   name: {
     type: String,

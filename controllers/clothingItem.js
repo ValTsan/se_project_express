@@ -4,7 +4,7 @@ const BadRequestError = require("../errors/BadRequestError");
 const NotFoundError = require("../errors/NotFoundError");
 const ForbiddenError = require("../errors/ForbiddenError");
 
-//POST /items
+// POST /items
 const createItem = (req, res, next, err) => {
   console.log("Received user ID:", req.user._id);
 
@@ -25,7 +25,7 @@ const createItem = (req, res, next, err) => {
     });
 };
 
-//GET /items
+// GET /items
 const getItems = (req, res, next) => {
   const { itemId } = req.params;
   console.log(itemId);
@@ -75,7 +75,7 @@ const deleteItem = (req, res, next) => {
     });
 };
 
-//LIKE Item
+// LIKE Item
 const likeItem = (req, res, next) => {
   // http://localhost:3001/items/12d124d121212/likes
   ClothingItem.findByIdAndUpdate(
@@ -96,7 +96,7 @@ const likeItem = (req, res, next) => {
     });
 };
 
-//UNLIKE/DELETE Like
+// UNLIKE/DELETE Like
 const deleteLike = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
