@@ -1,12 +1,12 @@
 const router = require("express").Router();
 
 const userRouter = require("./users");
-const itemRouter = require("./clothingItems");
+const clothingItem = require("./clothingItems");
 const { NOT_FOUND } = require("../utils/errors");
 
 // Route definitions
 router.use("/users", userRouter);
-router.use("/items", itemRouter);
+router.use("/items", clothingItem);
 
 // Handle non-existent routes with a `404 Not Found` error
 router.use((req, res) => {
