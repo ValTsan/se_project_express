@@ -22,7 +22,11 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).json(user))
     .catch((err) => {
       console.error(err);
-      return res.status(BAD_REQUEST).json({ message: "Bad Request" });
+
+      if (err.name === "ValidationError") {
+        return res.status(BAD_REQUEST).json({ message: "Bad Request" });
+      }
+      return res.status(DEFAULT).json({ message: "Internal Server Error" });
     });
 };
 

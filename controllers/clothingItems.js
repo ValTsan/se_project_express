@@ -33,9 +33,6 @@ const getItems = (req, res) => {
     .catch((err) => {
       console.error(err);
       console.log(err.name);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).json({ message: "Item not found" });
-      }
       return res.status(DEFAULT).json({ message: "Internal Server Error" });
     });
 };
