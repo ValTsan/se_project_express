@@ -1,6 +1,12 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
-const { DEFAULT, BAD_REQUEST, NOT_FOUND } = require("../utils/errors");
+const {
+  DEFAULT,
+  BAD_REQUEST,
+  NOT_FOUND,
+  DUPLICATE,
+} = require("../utils/errors");
+const user = require("../models/user");
 
 // GET /users
 const getUsers = (req, res) => {
@@ -14,15 +20,44 @@ const getUsers = (req, res) => {
 
 // POST /users
 const createUser = (req, res) => {
-  console.log(req);
-  console.log(req.body);
+  // console.log(req);
+  // console.log(req.body);
 
-  const { name, avatar } = req.body;
+  const { name, avatar, email, password } = req.body;
 
-  User.create({ name, avatar })
-    .then((user) => res.status(201).json(user))
+  if (!name || !email || !password || !avatar) {
+    return res.status(BAD_REQUEST).json({ message: "All fields are required" });
+  }
+  return User.findOne({ email })
+    .select("+password")
+    .then((user) => {
+      if (user) {
+        const error = new Error();
+        error.code = 110000;
+        throw error;
+      }
+
+      return bcrypt
+        .hash(password, 10)
+        .then((hashedPassword) =>
+          User.create({ name, avatar, email, password: hashedPassword })
+        );
+    })
+    .then((user) =>
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+      })
+    )
+
     .catch((err) => {
       console.error(err);
+
+      if (err.code === 11000) {
+        return res.status(DUPLICATE).json({ message: "Email already exists" });
+      }
 
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).json({ message: "Bad Request" });
