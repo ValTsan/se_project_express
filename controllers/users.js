@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const { DEFAULT, BAD_REQUEST, NOT_FOUND } = require("../utils/errors");
 
