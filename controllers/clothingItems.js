@@ -4,6 +4,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   FORBIDDEN_ERROR,
+  UNAUTHORIZED,
 } = require("../utils/errors");
 
 // POST /items
@@ -45,31 +46,46 @@ const getItems = (req, res) => {
 // DELETE /items/:itemId
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  ClothingItem.findById(itemId)
+  console.log("deleting Clothing Items");
+
+  if (!req.user) {
+    return res
+      .status(UNAUTHORIZED)
+      .json({ message: "Authentication required" });
+  }
+
+  return ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
-      const ownerId = item.owner.toString();
-      if (ownerId !== req.user._id) {
-        throw new Error("Forbidden");
-      }
-      return ClothingItem.findByIdAndDelete(itemId);
-    })
-
-    .then(() => res.status(OK).send({ message: "Item deleted" })) // keep inside then block the response in case everything is successful / correct
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: "Item not found" });
-      }
-      if (err.message === "Forbidden") {
+      if (item.owner.toString() !== req.user._id.toString()) {
         return res
           .status(FORBIDDEN_ERROR)
-          .send({ message: "You are not authorized to delete this item" });
+          .json({ message: "You are not authorized to delete this item" });
       }
-
+      return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) =>
+        res.status(200).send(deletedItem)
+      );
+    })
+    .catch((err) => {
+      console.error("Item deletion error", err);
+      if (err.name === "ForbiddenError") {
+        return res
+          .status(FORBIDDEN_ERROR)
+          .json({ message: "User not authorized" });
+      }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid ID format" });
+        return res
+          .status(BAD_REQUEST)
+          .json({ message: "Invalid data provided" });
       }
-      return res.status(DEFAULT).send({ message: "Server error occurred" });
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(NOT_FOUND)
+          .json({ message: "Id provided was not found" });
+      }
+      return res
+        .status(DEFAULT)
+        .json({ message: "An error has occured on the server" });
     });
 };
 

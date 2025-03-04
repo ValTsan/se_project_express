@@ -22,7 +22,7 @@ const updateUserProfile = (req, res) => {
       .json({ message: "Both name and avatar are required" });
   }
 
-  User.findByIdAndUpdate(
+  return User.findByIdAndUpdate(
     userId,
     { name, avatar },
     { new: true, runValidators: true }
@@ -31,7 +31,7 @@ const updateUserProfile = (req, res) => {
       if (!updatedUser) {
         return res.status(NOT_FOUND).json({ message: "User not found" });
       }
-      res.status(200).json({
+      return res.status(200).json({
         _id: updatedUser._id,
         name: updatedUser.name,
         email: updatedUser.email,
