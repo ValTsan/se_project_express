@@ -44,7 +44,13 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findById(itemId)
     .orFail()
-    .then(() => ClothingItem.findByIdAndDelete(itemId))
+    .then((item) => {
+      const ownerId = item.owner.toString();
+      if (ownerId !== req.user._id) {
+        throw new Error("You are not allowed to delete this item");
+      }
+      return ClothingItem.findByIdAndDelete(itemId);
+    })
     .then((deletedItem) => {
       res
         .status(200)
