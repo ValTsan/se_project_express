@@ -10,7 +10,7 @@ const {
   UNAUTHORIZED,
 } = require("../utils/errors");
 
-//PATCH /:updateUsers
+// PATCH /:updateUsers
 const updateUserProfile = (req, res) => {
   const userId = req.user._id;
   const { name, avatar } = req.body;
@@ -114,7 +114,7 @@ const getCurrentUser = (req, res) => {
     });
 };
 
-//POST /:login
+// POST /:login
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
