@@ -68,11 +68,7 @@ const deleteItem = (req, res) => {
     })
     .catch((err) => {
       console.error("Item deletion error", err);
-      if (err.name === "ForbiddenError") {
-        return res
-          .status(FORBIDDEN_ERROR)
-          .json({ message: "User not authorized" });
-      }
+
       if (err.name === "CastError") {
         return res
           .status(BAD_REQUEST)

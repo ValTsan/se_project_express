@@ -18,7 +18,7 @@ const updateUserProfile = (req, res) => {
 
   if (!name || !avatar) {
     return res
-      .status(400)
+      .status(BAD_REQUEST)
       .json({ message: "Both name and avatar are required" });
   }
 
