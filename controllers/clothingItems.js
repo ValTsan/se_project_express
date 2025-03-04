@@ -1,5 +1,10 @@
 const ClothingItem = require("../models/clothingItems");
-const { DEFAULT, BAD_REQUEST, NOT_FOUND } = require("../utils/errors");
+const {
+  DEFAULT,
+  BAD_REQUEST,
+  NOT_FOUND,
+  FORBIDDEN_ERROR,
+} = require("../utils/errors");
 
 // POST /items
 const createItem = (req, res) => {
@@ -38,34 +43,64 @@ const getItems = (req, res) => {
 };
 
 // DELETE /items/:itemId
+// const deleteItem = (req, res) => {
+//   const { itemId } = req.params;
+//   console.log("Deleting item:", itemId);
+
+//   ClothingItem.findById(itemId)
+//     .orFail()
+//     .then((item) => {
+//       const ownerId = item.owner.toString();
+//       if (ownerId !== req.user._id) {
+//         throw new Error("You are not allowed to delete this item");
+//       }
+//       return ClothingItem.findByIdAndDelete(itemId);
+//     })
+//     .then((deletedItem) => {
+//       res
+//         .status(200)
+//         .json({ message: "Item deleted successfully", deletedItem });
+//     })
+//     .catch((err) => {
+//       console.error(err);
+
+//       if (err.name === "DocumentNotFoundError") {
+//         return res.status(NOT_FOUND).json({ message: "Item not found" });
+//       }
+//       if (err.name === "CastError") {
+//         return res.status(BAD_REQUEST).json({ message: "Validation error" });
+//       }
+//       return res.status(DEFAULT).json({ message: "Internal Server Error" });
+//     });
+// };
+
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  console.log("Deleting item:", itemId);
-
   ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
       const ownerId = item.owner.toString();
       if (ownerId !== req.user._id) {
-        throw new Error("You are not allowed to delete this item");
+        throw new Error("Forbidden");
       }
       return ClothingItem.findByIdAndDelete(itemId);
     })
-    .then((deletedItem) => {
-      res
-        .status(200)
-        .json({ message: "Item deleted successfully", deletedItem });
-    })
-    .catch((err) => {
-      console.error(err);
 
+    .then(() => res.status(OK).send({ message: "Item deleted" })) // keep inside then block the response in case everything is successful / correct
+    .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).json({ message: "Item not found" });
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
+      if (err.message === "Forbidden") {
+        return res
+          .status(FORBIDDEN)
+          .send({ message: "You are not authorized to delete this item" });
+      }
+
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).json({ message: "Validation error" });
+        return res.status(BAD_REQUEST).send({ message: "Invalid ID format" });
       }
-      return res.status(DEFAULT).json({ message: "Internal Server Error" });
+      return res.status(DEFAULT).send({ message: "Server error occurred" });
     });
 };
 
