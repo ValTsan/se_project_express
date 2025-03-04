@@ -43,37 +43,6 @@ const getItems = (req, res) => {
 };
 
 // DELETE /items/:itemId
-// const deleteItem = (req, res) => {
-//   const { itemId } = req.params;
-//   console.log("Deleting item:", itemId);
-
-//   ClothingItem.findById(itemId)
-//     .orFail()
-//     .then((item) => {
-//       const ownerId = item.owner.toString();
-//       if (ownerId !== req.user._id) {
-//         throw new Error("You are not allowed to delete this item");
-//       }
-//       return ClothingItem.findByIdAndDelete(itemId);
-//     })
-//     .then((deletedItem) => {
-//       res
-//         .status(200)
-//         .json({ message: "Item deleted successfully", deletedItem });
-//     })
-//     .catch((err) => {
-//       console.error(err);
-
-//       if (err.name === "DocumentNotFoundError") {
-//         return res.status(NOT_FOUND).json({ message: "Item not found" });
-//       }
-//       if (err.name === "CastError") {
-//         return res.status(BAD_REQUEST).json({ message: "Validation error" });
-//       }
-//       return res.status(DEFAULT).json({ message: "Internal Server Error" });
-//     });
-// };
-
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
   ClothingItem.findById(itemId)
@@ -93,7 +62,7 @@ const deleteItem = (req, res) => {
       }
       if (err.message === "Forbidden") {
         return res
-          .status(FORBIDDEN)
+          .status(FORBIDDEN_ERROR)
           .send({ message: "You are not authorized to delete this item" });
       }
 
