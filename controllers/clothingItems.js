@@ -1,14 +1,11 @@
 const ClothingItem = require("../models/clothingItems");
-const {
-  DEFAULT,
-  BAD_REQUEST,
-  NOT_FOUND,
-  FORBIDDEN_ERROR,
-  UNAUTHORIZED,
-} = require("../utils/errors");
+const { BadRequestError } = require("../utils/BadRequestError");
+const { ForbiddenError } = require("../utils/ForbiddenError");
+const { NotFoundError } = require("../utils/NotFoundError");
+const { UnauthorizedError } = require("../utils/UnauthorizedError");
 
 // POST /items
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   console.log("Received user ID:", req.user._id);
 
   const { name, weather, imageUrl } = req.body;
@@ -17,76 +14,66 @@ const createItem = (req, res) => {
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       console.log(item);
-      res.status(200).json(item);
+      res.send(item);
     })
     .catch((error) => {
       console.error(error.name);
 
       if (error.name === "ValidationError") {
-        return res.status(BAD_REQUEST).json({ message: "Validation error" });
+        next(new BadRequestError("Invalid data provided"));
       }
-      return res.status(DEFAULT).json({ message: "Internal server error" });
+      return next(err);
     });
 };
 
 // GET /items
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   const { itemId } = req.params;
   console.log(itemId);
 
   ClothingItem.find({})
-    .then((items) => res.status(200).json(items))
-    .catch((err) => {
-      console.error(err);
-      console.log(err.name);
-      return res.status(DEFAULT).json({ message: "Internal Server Error" });
-    });
+    .then((items) => res.send(items))
+    .catch((err) => next(err));
 };
 
 // DELETE /items/:itemId
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
-  console.log("deleting Clothing Items");
+  //console.log("deleting Clothing Items");
 
   if (!req.user) {
-    return res
-      .status(UNAUTHORIZED)
-      .json({ message: "Authentication required" });
+    next(new UnauthorizedError("Authentication required"));
+    return;
   }
 
   return ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== req.user._id.toString()) {
-        return res
-          .status(FORBIDDEN_ERROR)
-          .json({ message: "You are not authorized to delete this item" });
+        next(new ForbiddenError("You are not authorized to delete this item"));
       }
       return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) =>
-        res.status(200).send(deletedItem)
+        res.send(deletedItem)
       );
     })
     .catch((err) => {
       console.error("Item deletion error", err);
 
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .json({ message: "Invalid data provided" });
+        next(new BadRequestError("Invalid data provided"));
       }
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .json({ message: "Id provided was not found" });
+        next(new NotFoundError("Id provided was not found"));
       }
-      return res
-        .status(DEFAULT)
-        .json({ message: "An error has occured on the server" });
+      if (err.name === "UnauthorizedError") {
+        next(new UnauthorizedError("Authentication required"));
+      }
+      return next(err);
     });
 };
 
 // LIKE Item
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   // http://localhost:3001/items/12d124d121212/likes
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
@@ -97,17 +84,17 @@ const likeItem = (req, res) => {
     .then((items) => res.status(200).send(items))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).json({ message: "Item not found" });
+        return next(new NotFoundError("Item not found"));
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).json({ message: "Validation error" });
+        return next(new BadRequestError("Validation error"));
       }
-      return res.status(DEFAULT).json({ message: "Internal Server Error" });
+      return next(err);
     });
 };
 
 // UNLIKE/DELETE Like
-const deleteLike = (req, res) => {
+const deleteLike = (req, res, next) => {
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
@@ -117,12 +104,12 @@ const deleteLike = (req, res) => {
     .then((items) => res.status(200).json(items))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).json({ message: "item not found" });
+        return next(new NotFoundError("Item Not Found"));
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).json({ message: "Validation error" });
+        return next(new BadRequestError("Validation error"));
       }
-      return res.status(DEFAULT).json({ message: "Internal Server Error" });
+      return next(err);
     });
 };
 
