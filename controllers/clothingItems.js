@@ -22,7 +22,7 @@ const createItem = (req, res, next) => {
       if (error.name === "ValidationError") {
         next(new BadRequestError("Invalid data provided"));
       }
-      return next(err);
+      return next(error);
     });
 };
 
@@ -39,7 +39,7 @@ const getItems = (req, res, next) => {
 // DELETE /items/:itemId
 const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
-  //console.log("deleting Clothing Items");
+  // console.log("deleting Clothing Items");
 
   if (!req.user) {
     next(new UnauthorizedError("Authentication required"));

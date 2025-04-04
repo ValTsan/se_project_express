@@ -23,6 +23,7 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
+    "no-unused-vars": ["error", { argsIgnorePattern: "next" }],
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
     "no-console": ["warn", { allow: ["error"] }],
     "import/extensions": ["error", "ignorePackages", { js: "never" }],

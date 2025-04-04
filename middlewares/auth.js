@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
-const { UNAUTHORIZED } = require("../utils/errors");
+const { UnauthorizedError } = require("../utils/UnauthorizedError");
 
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    return res
-      .status(UNAUTHORIZED)
-      .json({ message: "Authorization header is missing" });
+    return next(
+      new UnauthorizedError("Authorization header is missing or invalid")
+    );
   }
 
   const token = authorization.replace("Bearer ", "");
@@ -18,9 +18,7 @@ const auth = (req, res, next) => {
     return next();
   } catch (err) {
     console.error(err);
-    return res
-      .status(UNAUTHORIZED)
-      .send({ message: "Invalid or expired token" });
+    return next(new UnauthorizedError("Invalid or expired token"));
   }
 };
 

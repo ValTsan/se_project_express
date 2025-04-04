@@ -2,7 +2,7 @@ const router = require("express").Router();
 const userRouter = require("./users");
 const clothingItem = require("./clothingItemssss");
 const { createUser, login } = require("../controllers/users");
-const { NOT_FOUND } = require("../utils/errors");
+const { NotFoundError } = require("../utils/NotFoundError");
 
 // Public Routes (No Authentication Required)
 router.post("/signin", login); // Login
@@ -13,8 +13,8 @@ router.use("/items", clothingItem);
 router.use("/users", userRouter);
 
 // 404 Handler (For Non-Existent Routes)
-router.use((req, res) => {
-  res.status(NOT_FOUND).json({ message: "Requested resource not found" });
+router.use((req, res, next) => {
+  next(new NotFoundError("Requested resource not found"));
 });
 
 module.exports = router;
