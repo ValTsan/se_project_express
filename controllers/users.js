@@ -11,7 +11,7 @@ const { ConflictError } = require("../utils/ConflictError");
 const updateUserProfile = (req, res, next) => {
   const userId = req.user._id;
   const { name, avatar } = req.body;
-  //console.log(userId);
+  // console.log(userId);
 
   if (!name || !avatar) {
     return next(new BadRequestError("Both name and avatar are required"));

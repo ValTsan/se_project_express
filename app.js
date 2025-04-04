@@ -3,6 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const mainRouter = require("./routes/index");
 const { errorHandler } = require("./middlewares/error-handler");
+const { errors } = require("celebrate");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -20,10 +21,13 @@ mongoose
   })
   .catch(console.error);
 
+// Celebrate Error Handler
+app.use(errors());
+
+// Centralized Error Handler
+app.use(errorHandler);
+
 // Port Connection
 app.listen(PORT, () => {
   console.log(`App is running on port ${PORT}`);
 });
-
-// Centralized Error Handler
-app.use(errorHandler);
