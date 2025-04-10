@@ -38,6 +38,6 @@ app.use(errors());
 app.use(errorHandler);
 
 // Port Connection
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, () => {
   console.log(`App is running on port ${PORT}`);
 });
