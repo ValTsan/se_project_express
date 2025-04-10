@@ -42,8 +42,7 @@ const deleteItem = (req, res, next) => {
   // console.log("deleting Clothing Items");
 
   if (!req.user) {
-    next(new UnauthorizedError("Authentication required"));
-    return;
+    return next(new UnauthorizedError("Authentication required"));
   }
 
   return ClothingItem.findById(itemId)
