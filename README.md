@@ -11,3 +11,11 @@ The project enhances the understanding of databases, backend development, and we
 	•	MongoDB & Mongoose – to manage and query the database
 	•	JWT Authentication – to secure user authentication
 	•	ESLint & Prettier – to maintain code quality and formatting
+
+### Domain name
+
+https://www.what2wear-project.jumpingcrab.com
+
+## Backend
+
+- [Link to FrontEnd](https://github.com/ValTsan/se_project_react)
