@@ -42,10 +42,12 @@ const passwordField = Joi.string().required().messages({
 
 // Validation for Clothing Item (create item)
 const validateCardBody = celebrate({
-  body: Joi.object().keys({
-    name: nameField,
-    imageUrl: imageUrlField,
-  }),
+  body: Joi.object()
+    .keys({
+      name: nameField,
+      imageUrl: imageUrlField,
+    })
+    .unknown(true),
 });
 
 // Validation for User Registration

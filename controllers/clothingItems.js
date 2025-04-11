@@ -40,6 +40,8 @@ const getItems = (req, res, next) => {
 const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   // console.log("deleting Clothing Items");
+  console.log("Item ID:", req.params.itemId);
+  console.log("User ID:", req.user._id);
 
   if (!req.user) {
     return next(new UnauthorizedError("Authentication required"));
