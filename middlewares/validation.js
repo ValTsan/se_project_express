@@ -73,9 +73,17 @@ const validateId = celebrate({
   }),
 });
 
+const validateUpdateUser = celebrate({
+  body: Joi.object().keys({
+    name: nameField,
+    avatar: avatarField,
+  }),
+});
+
 module.exports = {
   validateCardBody,
   validateId,
   validateRegisterBody,
   validateLoginBody,
+  validateUpdateUser,
 };

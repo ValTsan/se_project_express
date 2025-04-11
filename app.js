@@ -13,6 +13,13 @@ const { PORT = 3001 } = process.env;
 // CORS Middleware
 app.use(cors());
 
+// Server Crash Test Route (Remove in Production)
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
+
 // Body Parser Middleware
 app.use(express.json());
 
@@ -29,13 +36,6 @@ mongoose
     console.log("Connect to DB");
   })
   .catch(console.error);
-
-// Server Crash Test Route (Remove in Production)
-app.get("/crash-test", () => {
-  setTimeout(() => {
-    throw new Error("Server will crash now");
-  }, 0);
-});
 
 // Error Logger
 app.use(errorLogger);

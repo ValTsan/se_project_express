@@ -3,10 +3,14 @@ const userRouter = require("./users");
 const clothingItem = require("./clothingItemssss");
 const { createUser, login } = require("../controllers/users");
 const { NotFoundError } = require("../utils/NotFoundError");
+const {
+  validateLoginBody,
+  validateRegisterBody,
+} = require("../middlewares/validation");
 
 // Public Routes (No Authentication Required)
-router.post("/signin", login); // Login
-router.post("/signup", createUser); // Sign up
+router.post("/signin", validateLoginBody, login); // Login
+router.post("/signup", validateRegisterBody, createUser); // Sign up
 router.use("/items", clothingItem);
 
 // Protected Routes (Require Authentication)
@@ -18,3 +22,4 @@ router.use((req, res, next) => {
 });
 
 module.exports = router;
+ß;
