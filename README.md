@@ -16,6 +16,6 @@ The project enhances the understanding of databases, backend development, and we
 
 https://www.what2wear-project.jumpingcrab.com
 
-## Backend
+## Frontend
 
 - [Link to FrontEnd](https://github.com/ValTsan/se_project_react)
