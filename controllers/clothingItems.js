@@ -28,8 +28,8 @@ const createItem = (req, res, next) => {
 
 // GET /items
 const getItems = (req, res, next) => {
-  const { itemId } = req.params;
-  console.log(itemId);
+  // const { itemId } = req.params;
+  // console.log(itemId);
 
   ClothingItem.find({})
     .then((items) => res.send(items))
